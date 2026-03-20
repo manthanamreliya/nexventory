@@ -30,6 +30,8 @@ app.use(express.json());
 connectDB();
 
 // Routes
+app.use('/api/auth', require('./routes/auth'));
+
 app.get('/', (req, res) => {
     res.send('Nexventory API is running');
 });

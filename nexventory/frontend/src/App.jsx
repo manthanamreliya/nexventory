@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import React from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Layout from './components/Layout';
 import Dashboard from './pages/Dashboard';
 import Products from './pages/Products';
@@ -7,33 +7,37 @@ import Orders from './pages/Orders';
 import Billing from './pages/Billing';
 import Reports from './pages/Reports';
 import Settings from './pages/Settings';
+import Login from './pages/Login';
+import Register from './pages/Register';
 import { NexventoryProvider } from './context/NexventoryContext';
+import { AuthProvider, useAuth } from './context/AuthContext';
 
-// Placeholder components until real ones are implemented
-const Placeholder = ({ title }) => (
-  <div className="card">
-    <h2>{title}</h2>
-    <p>This feature is coming soon.</p>
-  </div>
-);
+const ProtectedRoute = ({ children }) => {
+    const { user, loading } = useAuth();
+    if (loading) return <div>Loading...</div>;
+    return user ? children : <Navigate to="/login" replace />;
+};
 
 function App() {
-  // Lifted state could go here, or contexts
   return (
-    <NexventoryProvider>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Layout />}>
-            <Route index element={<Dashboard />} />
-            <Route path="products" element={<Products />} />
-            <Route path="orders" element={<Orders />} />
-            <Route path="billing" element={<Billing />} />
-            <Route path="reports" element={<Reports />} />
-            <Route path="settings" element={<Settings />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
-    </NexventoryProvider>
+    <AuthProvider>
+      <NexventoryProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/" element={<ProtectedRoute><Layout /></ProtectedRoute>}>
+              <Route index element={<Dashboard />} />
+              <Route path="products" element={<Products />} />
+              <Route path="orders" element={<Orders />} />
+              <Route path="billing" element={<Billing />} />
+              <Route path="reports" element={<Reports />} />
+              <Route path="settings" element={<Settings />} />
+            </Route>
+          </Routes>
+        </BrowserRouter>
+      </NexventoryProvider>
+    </AuthProvider>
   );
 }
 

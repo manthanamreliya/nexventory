@@ -1,7 +1,17 @@
 import React from 'react';
-import { Bell, User } from 'lucide-react';
+import { Bell, User, LogOut } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 const Header = ({ title }) => {
+    const { user, logout } = useAuth();
+    const navigate = useNavigate();
+
+    const handleLogout = () => {
+        logout();
+        navigate('/login');
+    };
+
     return (
         <header className="header">
             <h1 className="page-title">{title}</h1>
@@ -15,8 +25,11 @@ const Header = ({ title }) => {
                     <div className="avatar">
                         <User size={20} />
                     </div>
-                    <span className="user-name">Admin User</span>
+                    <span className="user-name">{user?.name || 'Admin User'}</span>
                 </div>
+                <button className="icon-btn logout-btn" onClick={handleLogout} title="Logout">
+                    <LogOut size={20} />
+                </button>
             </div>
 
             <style>{`
@@ -55,11 +68,18 @@ const Header = ({ title }) => {
           justify-content: center;
           color: var(--text-muted);
           transition: background-color 0.2s;
+          border: none;
+          background: transparent;
+          cursor: pointer;
         }
 
         .icon-btn:hover {
           background-color: var(--background);
           color: var(--text-main);
+        }
+
+        .logout-btn:hover {
+          color: var(--danger);
         }
 
         .badge {
@@ -79,11 +99,6 @@ const Header = ({ title }) => {
           gap: 0.75rem;
           padding: 0.25rem 0.5rem;
           border-radius: var(--radius);
-          cursor: pointer;
-        }
-
-        .user-profile:hover {
-          background-color: var(--background);
         }
 
         .avatar {
