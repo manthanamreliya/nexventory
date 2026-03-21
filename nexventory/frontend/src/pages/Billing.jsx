@@ -153,7 +153,7 @@ const Billing = () => {
                                     <th>Price</th>
                                     <th>Quantity</th>
                                     <th>Total</th>
-                                    <th>Action</th>
+                                    <th className="print-hide">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -184,7 +184,7 @@ const Billing = () => {
                                             />
                                         </td>
                                         <td className="font-bold">{formatCurrency(item.total)}</td>
-                                        <td>
+                                        <td className="print-hide">
                                             <button
                                                 className="icon-btn-danger"
                                                 onClick={() => removeItem(index)}
@@ -339,6 +339,145 @@ const Billing = () => {
         
         .action-buttons-large button {
           flex: 1;
+        }
+
+        @media print {
+          /* Force colors to print */
+          * {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+          }
+
+          /* Hide app UI */
+          .sidebar, .header, .btn, .icon-btn-danger, .text-muted, .items-header, .action-buttons-large, .print-hide {
+            display: none !important;
+          }
+          
+          /* Reset main content layout */
+          .main-content {
+            margin-left: 0 !important;
+            background: white !important;
+          }
+          
+          .content-area {
+            padding: 0 !important;
+            overflow: visible !important;
+          }
+          
+          body {
+            background: white !important;
+            color: var(--text-main) !important;
+          }
+
+          /* Header styling */
+          .billing-header {
+            margin-bottom: 2rem !important;
+            padding-bottom: 1rem !important;
+            border-bottom: 2px solid var(--primary) !important;
+          }
+
+          .billing-header h2 {
+            color: var(--primary) !important;
+          }
+
+          .bill-id-badge {
+            border: 1px solid var(--primary) !important;
+            color: var(--primary) !important;
+            background-color: rgba(79, 70, 229, 0.05) !important;
+            padding: 0.5rem 1rem !important;
+            border-radius: var(--radius) !important;
+          }
+
+          /* General card and grid resets */
+          .card {
+            box-shadow: none !important;
+            border: none !important;
+            padding: 0 !important;
+            margin-bottom: 3rem !important;
+          }
+          
+          .card h3 {
+            color: var(--primary) !important;
+            border-bottom: 1px solid var(--border) !important;
+            padding-bottom: 0.5rem !important;
+            margin-bottom: 1rem !important;
+            font-size: 1.1rem !important;
+          }
+
+          .billing-grid {
+            display: block !important;
+          }
+          
+          .form-grid {
+            display: flex !important;
+            gap: 2rem !important;
+          }
+          
+          .form-group {
+            flex: 1;
+            break-inside: avoid;
+          }
+          
+          /* Make inputs look like text */
+          input, select {
+            border: none !important;
+            background: transparent !important;
+            padding: 0 !important;
+            font-weight: 600;
+            font-size: 1rem !important;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            color: var(--text-main) !important;
+          }
+          
+          /* Format the table for printing */
+          .items-table {
+            border-collapse: collapse !important;
+            width: 100% !important;
+            border: 1px solid var(--border) !important;
+          }
+          
+          .items-table th {
+            background-color: var(--primary) !important;
+            color: white !important;
+            border-bottom: 2px solid var(--primary-hover) !important;
+            padding: 0.75rem !important;
+          }
+          
+          .items-table td {
+            border-bottom: 1px solid var(--border) !important;
+            padding: 0.75rem !important;
+          }
+          
+          .items-table tr {
+            page-break-inside: avoid;
+            break-inside: avoid;
+          }
+
+          .items-table tr:nth-child(even) {
+            background-color: #f8fafc !important;
+          }
+
+          .summary-section {
+            align-items: flex-end !important;
+            page-break-inside: avoid;
+            break-inside: avoid;
+            margin-top: 2rem !important;
+          }
+          
+          .summary-row {
+            color: var(--text-main) !important;
+            padding: 0.5rem 0 !important;
+            border-bottom: 1px solid #f1f5f9 !important;
+          }
+          
+          .summary-total {
+            color: var(--primary) !important;
+            padding-top: 1rem !important;
+            border-top: 2px solid var(--primary) !important;
+            font-size: 1.25rem !important;
+          }
         }
       `}</style>
         </div>

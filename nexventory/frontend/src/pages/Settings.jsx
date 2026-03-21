@@ -8,7 +8,7 @@ const Settings = () => {
     notifications: true,
     emailAlerts: true,
     twoFactor: false,
-    currency: 'USD',
+    currency: 'INR',
   });
 
   const handleToggle = (key) => {

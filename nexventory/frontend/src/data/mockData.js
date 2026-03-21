@@ -31,7 +31,7 @@ export const salesData = {
     weekly: {
         labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
         datasets: [{
-            label: 'Sales ($)',
+            label: 'Sales (₹)',
             data: [450, 620, 390, 850, 1200, 950, 780],
             borderColor: '#4f46e5',
             backgroundColor: 'rgba(79, 70, 229, 0.1)',
@@ -42,7 +42,7 @@ export const salesData = {
     monthly: {
         labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
         datasets: [{
-            label: 'Sales ($)',
+            label: 'Sales (₹)',
             data: [3200, 4100, 2900, 5600],
             borderColor: '#10b981',
             backgroundColor: 'rgba(16, 185, 129, 0.1)',

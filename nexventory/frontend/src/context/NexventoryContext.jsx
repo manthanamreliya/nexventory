@@ -155,7 +155,9 @@ export const NexventoryProvider = ({ children }) => {
     const updateStats = () => {
         const todayMidnight = new Date();
         todayMidnight.setHours(0, 0, 0, 0);
-        const todayStr = new Date().toISOString().split('T')[0];
+        
+        const getLocalYYYYMMDD = (d) => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+        const todayStr = getLocalYYYYMMDD(new Date());
 
         const totalStock = products.reduce((sum, p) => sum + (p.stock || 0), 0);
 
@@ -178,7 +180,7 @@ export const NexventoryProvider = ({ children }) => {
 
         orders.forEach(order => {
             const orderTotal = order.totalAmount || order.total || 0;
-            const orderDateStr = new Date(order.date).toISOString().split('T')[0];
+            const orderDateStr = getLocalYYYYMMDD(new Date(order.date));
 
             if (orderDateStr === todayStr) {
                 todayRevenue += orderTotal;
@@ -189,7 +191,7 @@ export const NexventoryProvider = ({ children }) => {
             const oDate = new Date(order.date);
             oDate.setHours(0, 0, 0, 0);
             const diffTime = todayMidnight - oDate;
-            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+            const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
 
             if (diffDays <= 6 && diffDays >= 0) {
                 const index = 6 - diffDays;
@@ -217,7 +219,7 @@ export const NexventoryProvider = ({ children }) => {
                 weekly: {
                     labels: weekLabels,
                     datasets: [{
-                        label: 'Sales ($)',
+                        label: 'Sales (₹)',
                         data: weekData,
                         borderColor: '#4f46e5',
                         backgroundColor: 'rgba(79, 70, 229, 0.1)',
@@ -228,7 +230,7 @@ export const NexventoryProvider = ({ children }) => {
                 monthly: {
                     labels: monthLabels,
                     datasets: [{
-                        label: 'Sales ($)',
+                        label: 'Sales (₹)',
                         data: monthData,
                         borderColor: '#10b981',
                         backgroundColor: 'rgba(16, 185, 129, 0.1)',

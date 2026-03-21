@@ -8,8 +8,8 @@ const Orders = () => {
 
   // Group orders by date
   const groupedOrders = orders.reduce((acc, order) => {
-    // Handle both mock date (string) and new Date object from context
-    const dateStr = new Date(order.date).toISOString().split('T')[0];
+    const d = new Date(order.date);
+    const dateStr = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
     if (!acc[dateStr]) {
       acc[dateStr] = [];
     }
@@ -50,7 +50,7 @@ const Orders = () => {
         {sortedDates.map((date) => (
           <div key={date} className="timeline-group">
             <div className="date-header">
-              <span className="date-badge">{new Date(date).toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</span>
+              <span className="date-badge">{new Date(date + 'T00:00:00').toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</span>
             </div>
 
             <div className="orders-list">

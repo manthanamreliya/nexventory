@@ -55,7 +55,7 @@ const SettingsSchema = {
     darkMode: "Boolean",
     currency: {
         type: "String",
-        default: "USD"
+        default: "INR"
     },
     notifications: {
         email: "Boolean",
