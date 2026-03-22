@@ -13,6 +13,12 @@ const Login = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
+
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            setError('Please enter a valid email address.');
+            return;
+        }
+
         try {
             await login(email, password);
             navigate('/');

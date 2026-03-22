@@ -14,6 +14,17 @@ const Register = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
+
+        if (!/^[A-Za-z\s]+$/.test(name)) {
+            setError('Name can only contain letters and spaces.');
+            return;
+        }
+
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            setError('Please enter a valid email address.');
+            return;
+        }
+
         try {
             await register(name, email, password);
             navigate('/');
@@ -35,8 +46,11 @@ const Register = () => {
 
                 <form onSubmit={handleSubmit} className="auth-form">
                     <div className="form-group">
-                        <label>Full Name</label>
-                        <input type="text" required value={name} onChange={(e) => setName(e.target.value)} placeholder="John Doe" />
+                        <label>Full Name *</label>
+                        <input type="text" required value={name} onChange={(e) => {
+                            const val = e.target.value.replace(/[^A-Za-z\s]/g, '');
+                            setName(val);
+                        }} placeholder="John Doe" />
                     </div>
                     <div className="form-group">
                         <label>Email Address</label>

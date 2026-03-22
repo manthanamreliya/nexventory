@@ -59,8 +59,23 @@ const Billing = () => {
     };
 
     const handleSubmit = () => {
-        if (!customer.name || items.some(i => !i.productId)) {
-            alert('Please fill in customer name and select products');
+        if (!customer.name || !/^[A-Za-z\s]+$/.test(customer.name)) {
+            alert('Please enter a valid customer name (letters and spaces only).');
+            return;
+        }
+
+        if (!customer.phone || !/^\d{10}$/.test(customer.phone) || customer.phone === '0000000000') {
+            alert('Please enter a valid 10-digit mobile number (cannot be all zeros).');
+            return;
+        }
+
+        if (!customer.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(customer.email)) {
+            alert('Please enter a valid email address.');
+            return;
+        }
+
+        if (items.some(i => !i.productId)) {
+            alert('Please select products for all items in the invoice.');
             return;
         }
 
@@ -112,22 +127,30 @@ const Billing = () => {
                                 type="text"
                                 placeholder="Enter name"
                                 value={customer.name}
-                                onChange={(e) => setCustomer({ ...customer, name: e.target.value })}
+                                onChange={(e) => {
+                                    const val = e.target.value.replace(/[^A-Za-z\s]/g, '');
+                                    setCustomer({ ...customer, name: val });
+                                }}
                             />
                         </div>
                         <div className="form-group">
                             <label>Phone Number</label>
                             <input
                                 type="text"
-                                placeholder="Enter phone"
+                                placeholder="Enter 10-digit phone"
                                 value={customer.phone}
-                                onChange={(e) => setCustomer({ ...customer, phone: e.target.value })}
+                                maxLength={10}
+                                onChange={(e) => {
+                                    const val = e.target.value.replace(/\D/g, '').slice(0, 10);
+                                    setCustomer({ ...customer, phone: val });
+                                }}
                             />
                         </div>
                         <div className="form-group">
-                            <label>Email (Optional)</label>
+                            <label>Email *</label>
                             <input
                                 type="email"
+                                required
                                 placeholder="Enter email"
                                 value={customer.email}
                                 onChange={(e) => setCustomer({ ...customer, email: e.target.value })}
