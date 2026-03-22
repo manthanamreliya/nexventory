@@ -1,11 +1,15 @@
 import React, { useState } from 'react';
-import { Search, Plus, Filter, MoreHorizontal, X, Trash2 } from 'lucide-react';
+import { Search, Plus, Filter, MoreHorizontal, X, Trash2, Edit2 } from 'lucide-react';
 import { useNexventory } from '../context/NexventoryContext';
 
 const Products = () => {
     const { products, addProduct, updateProduct, deleteProduct, formatCurrency } = useNexventory();
     const [searchTerm, setSearchTerm] = useState('');
     const [showModal, setShowModal] = useState(false);
+    const [sortBy, setSortBy] = useState('');
+    const [filterCategory, setFilterCategory] = useState('');
+    const [isEditing, setIsEditing] = useState(false);
+    const [editingId, setEditingId] = useState(null);
 
     // New Product Form State
     const [newProduct, setNewProduct] = useState({
@@ -16,23 +20,69 @@ const Products = () => {
         status: 'In Stock'
     });
 
-    const filteredProducts = products.filter(product =>
-        product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        product.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        product.category.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const categories = [...new Set(products.map(p => p.category))].filter(Boolean);
+
+    let processedProducts = products.filter(product => {
+        const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                              product.id.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesCategory = filterCategory ? product.category === filterCategory : true;
+        return matchesSearch && matchesCategory;
+    });
+
+    if (sortBy === 'price-asc') {
+        processedProducts.sort((a, b) => a.price - b.price);
+    } else if (sortBy === 'price-desc') {
+        processedProducts.sort((a, b) => b.price - a.price);
+    }
 
     const handleAddProduct = (e) => {
         e.preventDefault();
         if (!newProduct.name || !newProduct.price) return;
 
-        addProduct({
-            ...newProduct,
-            price: parseFloat(newProduct.price),
-            stock: parseInt(newProduct.stock) || 0
-        });
+        if (isEditing) {
+            updateProduct(editingId, {
+                ...newProduct,
+                price: parseFloat(newProduct.price),
+                stock: parseInt(newProduct.stock) || 0
+            });
+        } else {
+            addProduct({
+                ...newProduct,
+                price: parseFloat(newProduct.price),
+                stock: parseInt(newProduct.stock) || 0
+            });
+        }
 
         // Reset and close
+        setNewProduct({ name: '', category: '', price: '', stock: '', status: 'In Stock' });
+        setIsEditing(false);
+        setEditingId(null);
+        setShowModal(false);
+    };
+
+    const handleEditClick = (product) => {
+        setNewProduct({
+            name: product.name,
+            category: product.category,
+            price: product.price,
+            stock: product.stock,
+            status: product.status
+        });
+        setIsEditing(true);
+        setEditingId(product.id);
+        setShowModal(true);
+    };
+
+    const openAddModal = () => {
+        setIsEditing(false);
+        setEditingId(null);
+        setNewProduct({ name: '', category: '', price: '', stock: '', status: 'In Stock' });
+        setShowModal(true);
+    };
+
+    const handleCloseModal = () => {
+        setIsEditing(false);
+        setEditingId(null);
         setNewProduct({ name: '', category: '', price: '', stock: '', status: 'In Stock' });
         setShowModal(false);
     };
@@ -53,11 +103,27 @@ const Products = () => {
                 </div>
 
                 <div className="action-buttons">
-                    <button className="btn btn-outline">
-                        <Filter size={18} />
-                        Filter
-                    </button>
-                    <button className="btn btn-primary" onClick={() => setShowModal(true)}>
+                    <select 
+                        className="btn btn-outline" 
+                        value={filterCategory} 
+                        onChange={(e) => setFilterCategory(e.target.value)}
+                        style={{ outline: 'none', cursor: 'pointer' }}
+                    >
+                        <option value="">All Categories</option>
+                        {categories.map(c => <option key={c} value={c}>{c}</option>)}
+                    </select>
+                    
+                    <select 
+                        className="btn btn-outline"
+                        value={sortBy}
+                        onChange={(e) => setSortBy(e.target.value)}
+                        style={{ outline: 'none', cursor: 'pointer' }}
+                    >
+                        <option value="">Sort By</option>
+                        <option value="price-asc">Price: Low to High</option>
+                        <option value="price-desc">Price: High to Low</option>
+                    </select>
+                    <button className="btn btn-primary" onClick={openAddModal}>
                         <Plus size={18} />
                         Add Product
                     </button>
@@ -80,8 +146,8 @@ const Products = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {filteredProducts.length > 0 ? (
-                                filteredProducts.map((product) => (
+                            {processedProducts.length > 0 ? (
+                                processedProducts.map((product) => (
                                     <tr key={product.id}>
                                         <td className="font-mono text-sm text-muted">#{product.id}</td>
                                         <td className="font-bold">{product.name}</td>
@@ -98,8 +164,8 @@ const Products = () => {
                                                 <button className="icon-btn-sm" onClick={() => deleteProduct(product.id)}>
                                                     <Trash2 size={18} />
                                                 </button>
-                                                <button className="icon-btn-sm">
-                                                    <MoreHorizontal size={18} />
+                                                <button className="icon-btn-sm" onClick={() => handleEditClick(product)}>
+                                                    <Edit2 size={18} />
                                                 </button>
                                             </div>
                                         </td>
@@ -122,8 +188,8 @@ const Products = () => {
                 <div className="modal-overlay">
                     <div className="modal-content">
                         <div className="modal-header">
-                            <h3>Add New Product</h3>
-                            <button className="close-btn" onClick={() => setShowModal(false)}>
+                            <h3>{isEditing ? 'Edit Product' : 'Add New Product'}</h3>
+                            <button type="button" className="close-btn" onClick={handleCloseModal}>
                                 <X size={20} />
                             </button>
                         </div>
@@ -181,8 +247,10 @@ const Products = () => {
                                 </div>
                             </div>
                             <div className="modal-footer">
-                                <button type="button" className="btn btn-outline" onClick={() => setShowModal(false)}>Cancel</button>
-                                <button type="submit" className="btn btn-primary">Save Product</button>
+                                <button type="button" className="btn btn-outline" onClick={handleCloseModal}>Cancel</button>
+                                <button type="submit" className="btn btn-primary">
+                                    {isEditing ? 'Update Product' : 'Save Product'}
+                                </button>
                             </div>
                         </form>
                     </div>

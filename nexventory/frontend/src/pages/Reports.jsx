@@ -5,6 +5,9 @@ import { useNexventory } from '../context/NexventoryContext';
 const Reports = () => {
     const { stats, formatCurrency } = useNexventory();
 
+    const monthlyRevenue = stats.salesData?.monthly?.datasets[0]?.data?.reduce((a, b) => a + b, 0) || 0;
+    const avgDailySales = monthlyRevenue / 30;
+
     const handleExport = () => {
         window.print();
     };
@@ -37,7 +40,7 @@ const Reports = () => {
                         </div>
                         <div>
                             <p className="report-label">Total Revenue</p>
-                            <h3 className="report-value">{formatCurrency(stats.todayRevenue * 30)}</h3> {/* Mocking monthly projection */}
+                            <h3 className="report-value">{formatCurrency(monthlyRevenue)}</h3>
                             <p className="report-period">This Month</p>
                         </div>
                     </div>
@@ -59,7 +62,7 @@ const Reports = () => {
                         </div>
                         <div>
                             <p className="report-label">Avg. Daily Sales</p>
-                            <h3 className="report-value">{formatCurrency(stats.todayRevenue)}</h3>
+                            <h3 className="report-value">{formatCurrency(avgDailySales)}</h3>
                             <p className="report-period">Last 30 Days</p>
                         </div>
                     </div>

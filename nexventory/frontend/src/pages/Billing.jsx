@@ -166,7 +166,7 @@ const Billing = () => {
                                                 className="product-select"
                                             >
                                                 <option value="">Select Product</option>
-                                                {products.map(p => (
+                                                {products.filter(p => p.stock > 0 && p.status !== 'Out of Stock').map(p => (
                                                     <option key={p.id} value={p.id}>
                                                         {p.name} ({formatCurrency(p.price)})
                                                     </option>
