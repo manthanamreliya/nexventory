@@ -26,8 +26,14 @@ const Register = () => {
             return;
         }
 
-        if (!/^\d{10}$/.test(mobile) || mobile === '0000000000') {
+        if (mobile.length !== 10 || !/^\d+$/.test(mobile) || mobile === '0000000000') {
             setError('Please enter exactly a 10-digit mobile number.');
+            return;
+        }
+
+        const specialCharRegex = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/;
+        if (password.length < 8 || !/\d/.test(password) || !specialCharRegex.test(password)) {
+            setError('Password must be at least 8 characters long and contain at least one digit and one special character.');
             return;
         }
 
