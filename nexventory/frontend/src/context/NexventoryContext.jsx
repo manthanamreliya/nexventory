@@ -35,8 +35,8 @@ export const NexventoryProvider = ({ children }) => {
         const fetchData = async () => {
             try {
                 const [productsRes, ordersRes] = await Promise.all([
-                    fetch('http://localhost:5000/api/products', { headers: getHeaders() }),
-                    fetch('http://localhost:5000/api/orders', { headers: getHeaders() })
+                    fetch('https://nexventory.onrender.com/api/products', { headers: getHeaders() }),
+                    fetch('https://nexventory.onrender.com/api/orders', { headers: getHeaders() })
                 ]);
 
                 if (!productsRes.ok || !ordersRes.ok) {
@@ -73,7 +73,7 @@ export const NexventoryProvider = ({ children }) => {
 
     const refreshProducts = async () => {
         try {
-            const res = await fetch('http://localhost:5000/api/products', { headers: getHeaders() });
+            const res = await fetch('https://nexventory.onrender.com/api/products', { headers: getHeaders() });
             const data = await res.json();
             setProducts(data);
         } catch (error) {
@@ -99,7 +99,7 @@ export const NexventoryProvider = ({ children }) => {
 
     const addProduct = async (product) => {
         try {
-            const response = await fetch('http://localhost:5000/api/products', {
+            const response = await fetch('https://nexventory.onrender.com/api/products', {
                 method: 'POST',
                 headers: getHeaders(),
                 body: JSON.stringify(product)
@@ -116,7 +116,7 @@ export const NexventoryProvider = ({ children }) => {
 
     const updateProduct = async (id, updates) => {
         try {
-            const response = await fetch(`http://localhost:5000/api/products/${id}`, {
+            const response = await fetch(`https://nexventory.onrender.com/api/products/${id}`, {
                 method: 'PUT',
                 headers: getHeaders(),
                 body: JSON.stringify(updates)
@@ -131,7 +131,7 @@ export const NexventoryProvider = ({ children }) => {
 
     const deleteProduct = async (id) => {
         try {
-            await fetch(`http://localhost:5000/api/products/${id}`, {
+            await fetch(`https://nexventory.onrender.com/api/products/${id}`, {
                 method: 'DELETE',
                 headers: getHeaders()
             });
@@ -144,7 +144,7 @@ export const NexventoryProvider = ({ children }) => {
 
     const addOrder = async (order) => {
         try {
-            const response = await fetch('http://localhost:5000/api/orders', {
+            const response = await fetch('https://nexventory.onrender.com/api/orders', {
                 method: 'POST',
                 headers: getHeaders(),
                 body: JSON.stringify(order)
