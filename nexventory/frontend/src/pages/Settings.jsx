@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Moon, Bell, Globe, Shield } from 'lucide-react';
+import { Moon, Globe, Shield } from 'lucide-react';
 import { useNexventory } from '../context/NexventoryContext';
 
 const Settings = () => {
@@ -63,51 +63,6 @@ const Settings = () => {
         </div>
       </div>
 
-      <div className="section-group">
-        <h3>Notifications</h3>
-        <div className="card settings-card">
-          <div className="setting-item">
-            <div className="setting-info">
-              <div className="setting-icon"><Bell size={20} /></div>
-              <div>
-                <h4>Push Notifications</h4>
-                <p>Receive order updates and alerts</p>
-              </div>
-            </div>
-            <label className="switch">
-              <input
-                type="checkbox"
-                checked={settings.notifications}
-                onChange={() => handleToggle('notifications')}
-              />
-              <span className="slider round"></span>
-            </label>
-          </div>
-        </div>
-      </div>
-
-      <div className="section-group">
-        <h3>Security</h3>
-        <div className="card settings-card">
-          <div className="setting-item">
-            <div className="setting-info">
-              <div className="setting-icon"><Shield size={20} /></div>
-              <div>
-                <h4>Two-Factor Authentication</h4>
-                <p>Add an extra layer of security</p>
-              </div>
-            </div>
-            <label className="switch">
-              <input
-                type="checkbox"
-                checked={settings.twoFactor}
-                onChange={() => handleToggle('twoFactor')}
-              />
-              <span className="slider round"></span>
-            </label>
-          </div>
-        </div>
-      </div>
 
       <style>{`
         .max-w-2xl { max-width: 42rem; }

@@ -21,6 +21,7 @@ const PORT = process.env.PORT || 5000;
 
 const Product = require('./models/Product');
 const Order = require('./models/Order');
+const { protect } = require('./middleware/authMiddleware');
 
 // Middleware
 app.use(cors());
@@ -36,12 +37,16 @@ app.get('/', (req, res) => {
     res.send('Nexventory API is running');
 });
 
+// Protect all /api/products and /api/orders routes
+app.use('/api/products', protect);
+app.use('/api/orders', protect);
+
 // Get all products
 app.get('/api/products', async (req, res) => {
     try {
-        const products = await Product.find({});
+        const products = await Product.find({ user: req.user.id });
         if (products.length === 0) {
-            return res.json(mockData.products);
+            return res.json([]);
         }
         res.json(products);
     } catch (error) {
@@ -53,9 +58,9 @@ app.get('/api/products', async (req, res) => {
 // Get all orders
 app.get('/api/orders', async (req, res) => {
     try {
-        const orders = await Order.find({});
+        const orders = await Order.find({ user: req.user.id });
         if (orders.length === 0) {
-            return res.json(mockData.orders);
+            return res.json([]);
         }
         res.json(orders);
     } catch (error) {
@@ -75,6 +80,7 @@ app.post('/api/products', async (req, res) => {
         else if (stock < 10) status = 'Low Stock';
 
         const newProduct = new Product({
+            user: req.user.id,
             id: `PROD-${Date.now().toString().slice(-4)}`,
             name,
             category,
@@ -103,7 +109,7 @@ app.put('/api/products/:id', async (req, res) => {
         }
 
         const updatedProduct = await Product.findOneAndUpdate(
-            { id: req.params.id },
+            { id: req.params.id, user: req.user.id },
             req.body,
             { new: true }
         );
@@ -121,7 +127,7 @@ app.put('/api/products/:id', async (req, res) => {
 // Delete a product
 app.delete('/api/products/:id', async (req, res) => {
     try {
-        const deletedProduct = await Product.findOneAndDelete({ id: req.params.id });
+        const deletedProduct = await Product.findOneAndDelete({ id: req.params.id, user: req.user.id });
         if (!deletedProduct) {
             return res.status(404).json({ message: 'Product not found' });
         }
@@ -138,7 +144,7 @@ app.post('/api/orders', async (req, res) => {
 
         // 1. Verify and Update Stock for each item
         for (const item of items) {
-            const product = await Product.findOne({ id: item.productId });
+            const product = await Product.findOne({ id: item.productId, user: req.user.id });
             
             if (!product) {
                 return res.status(404).json({ message: `Product ${item.productId} not found` });
@@ -161,6 +167,7 @@ app.post('/api/orders', async (req, res) => {
 
         // 2. Create the Order
         const newOrder = new Order({
+            user: req.user.id,
             id: `ORD-${Date.now().toString().slice(-4)}`,
             customer,
             items,
@@ -180,7 +187,7 @@ app.post('/api/orders', async (req, res) => {
 app.put('/api/orders/:id', async (req, res) => {
     try {
         const updatedOrder = await Order.findOneAndUpdate(
-            { id: req.params.id },
+            { id: req.params.id, user: req.user.id },
             req.body,
             { new: true }
         );

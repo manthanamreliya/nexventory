@@ -68,6 +68,56 @@ const Dashboard = () => {
         };
     };
 
+    if (products.length === 0) {
+        return (
+            <div className="dashboard empty-dashboard">
+                <div className="card empty-state-card">
+                    <div className="empty-state-icon">
+                        <Package size={48} />
+                    </div>
+                    <h2>Welcome to Nexventory!</h2>
+                    <p className="text-muted">
+                        Your inventory is currently empty. Get started by adding your very first product to begin tracking sales, stock, and revenue automatically.
+                    </p>
+                    <button className="btn btn-primary mt-4" onClick={() => window.location.href = '/app/products'}>
+                        Get Started
+                    </button>
+                </div>
+                <style>{`
+                    .empty-dashboard {
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        min-height: calc(100vh - 120px);
+                    }
+                    .empty-state-card {
+                        text-align: center;
+                        padding: 4rem 2rem;
+                        max-width: 500px;
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        justify-content: center;
+                    }
+                    .empty-state-icon {
+                        width: 80px;
+                        height: 80px;
+                        background: rgba(79, 70, 229, 0.1);
+                        color: var(--primary);
+                        border-radius: 50%;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        margin-bottom: 1.5rem;
+                    }
+                    .empty-state-card h2 { margin-bottom: 0.5rem; color: var(--text-main); }
+                    .empty-state-card p { line-height: 1.6; margin-bottom: 1.5rem; }
+                    .mt-4 { margin-top: 1rem; }
+                `}</style>
+            </div>
+        );
+    }
+
     return (
         <div className="dashboard">
             {/* Stats Cards */}

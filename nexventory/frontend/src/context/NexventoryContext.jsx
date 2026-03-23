@@ -22,24 +22,36 @@ export const NexventoryProvider = ({ children }) => {
     const [currency, setCurrency] = useState('INR');
     const [loading, setLoading] = useState(true);
 
+    const getHeaders = () => {
+        const user = JSON.parse(localStorage.getItem('user'));
+        return {
+            'Content-Type': 'application/json',
+            ...(user?.token ? { Authorization: `Bearer ${user.token}` } : {})
+        };
+    };
+
     // Fetch data from backend
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const [productsRes, ordersRes] = await Promise.all([
-                    fetch('http://localhost:5000/api/products'),
-                    fetch('http://localhost:5000/api/orders')
+                    fetch('http://localhost:5000/api/products', { headers: getHeaders() }),
+                    fetch('http://localhost:5000/api/orders', { headers: getHeaders() })
                 ]);
+
+                if (!productsRes.ok || !ordersRes.ok) {
+                    throw new Error('Authorized backend fetch failed');
+                }
 
                 const productsData = await productsRes.json();
                 const ordersData = await ordersRes.json();
 
-                setProducts(productsData);
-                setOrders(ordersData);
+                setProducts(Array.isArray(productsData) ? productsData : []);
+                setOrders(Array.isArray(ordersData) ? ordersData : []);
             } catch (error) {
-                console.error("Failed to fetch data from backend, using mock data", error);
-                setProducts(mockProducts);
-                setOrders(mockOrders);
+                console.error("Failed to fetch data from backend, defaulting to empty arrays", error);
+                setProducts([]);
+                setOrders([]);
             } finally {
                 setLoading(false);
             }
@@ -61,7 +73,7 @@ export const NexventoryProvider = ({ children }) => {
 
     const refreshProducts = async () => {
         try {
-            const res = await fetch('http://localhost:5000/api/products');
+            const res = await fetch('http://localhost:5000/api/products', { headers: getHeaders() });
             const data = await res.json();
             setProducts(data);
         } catch (error) {
@@ -89,7 +101,7 @@ export const NexventoryProvider = ({ children }) => {
         try {
             const response = await fetch('http://localhost:5000/api/products', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: getHeaders(),
                 body: JSON.stringify(product)
             });
             const data = await response.json();
@@ -106,7 +118,7 @@ export const NexventoryProvider = ({ children }) => {
         try {
             const response = await fetch(`http://localhost:5000/api/products/${id}`, {
                 method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
+                headers: getHeaders(),
                 body: JSON.stringify(updates)
             });
             const data = await response.json();
@@ -120,7 +132,8 @@ export const NexventoryProvider = ({ children }) => {
     const deleteProduct = async (id) => {
         try {
             await fetch(`http://localhost:5000/api/products/${id}`, {
-                method: 'DELETE'
+                method: 'DELETE',
+                headers: getHeaders()
             });
             setProducts(prev => prev.filter(p => p.id !== id));
         } catch (error) {
@@ -133,7 +146,7 @@ export const NexventoryProvider = ({ children }) => {
         try {
             const response = await fetch('http://localhost:5000/api/orders', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: getHeaders(),
                 body: JSON.stringify(order)
             });
             const data = await response.json();

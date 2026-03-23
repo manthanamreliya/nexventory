@@ -1,15 +1,16 @@
-import React from 'react';
-import { Bell, User, LogOut } from 'lucide-react';
+import React, { useState } from 'react';
+import { User, LogOut, X, Mail, Phone, Shield } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
 const Header = ({ title }) => {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
+    const [showProfile, setShowProfile] = useState(false);
 
     const handleLogout = () => {
         logout();
-        navigate('/login');
+        window.location.href = '/login';
     };
 
     return (
@@ -17,11 +18,7 @@ const Header = ({ title }) => {
             <h1 className="page-title">{title}</h1>
 
             <div className="header-actions">
-                <button className="icon-btn">
-                    <Bell size={20} />
-                    <span className="badge">3</span>
-                </button>
-                <div className="user-profile">
+                <div className="user-profile" onClick={() => setShowProfile(true)} style={{ cursor: 'pointer' }} title="View Profile">
                     <div className="avatar">
                         <User size={20} />
                     </div>
@@ -31,6 +28,60 @@ const Header = ({ title }) => {
                     <LogOut size={20} />
                 </button>
             </div>
+
+            {showProfile && (
+                <div className="modal-overlay" onClick={() => setShowProfile(false)}>
+                    <div className="modal-content profile-modal-content" onClick={e => e.stopPropagation()}>
+                        <div className="modal-header">
+                            <h3>My Profile</h3>
+                            <button type="button" className="close-btn" onClick={() => setShowProfile(false)}>
+                                <X size={20} />
+                            </button>
+                        </div>
+                        <div className="profile-details-body">
+                            <div className="profile-hero">
+                                <div className="avatar-large">
+                                    <User size={36} />
+                                </div>
+                                <div className="hero-text">
+                                    <h4>{user?.name || 'Admin User'}</h4>
+                                    <span className="status-badge">● Active Space</span>
+                                </div>
+                            </div>
+                            
+                            <div className="info-grid">
+                                <div className="info-item">
+                                    <div className="info-icon-wrapper"><Mail size={18} /></div>
+                                    <div className="info-text">
+                                        <label>Email Address</label>
+                                        <p>{user?.email || 'admin@example.com'}</p>
+                                    </div>
+                                </div>
+                                
+                                <div className="info-item">
+                                    <div className="info-icon-wrapper"><Phone size={18} /></div>
+                                    <div className="info-text">
+                                        <label>Mobile Number</label>
+                                        <p>{user?.mobile || 'Not Provided'}</p>
+                                    </div>
+                                </div>
+                                
+                                <div className="info-item">
+                                    <div className="info-icon-wrapper"><Shield size={18} /></div>
+                                    <div className="info-text">
+                                        <label>Account Role</label>
+                                        <p>System Administrator</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button className="btn btn-primary w-full" onClick={() => setShowProfile(false)}>
+                                Close Profile
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             <style>{`
         .header {
@@ -82,17 +133,6 @@ const Header = ({ title }) => {
           color: var(--danger);
         }
 
-        .badge {
-          position: absolute;
-          top: 8px;
-          right: 8px;
-          width: 8px;
-          height: 8px;
-          background-color: var(--danger);
-          border-radius: 50%;
-          border: 1px solid var(--surface);
-        }
-
         .user-profile {
           display: flex;
           align-items: center;
@@ -116,6 +156,153 @@ const Header = ({ title }) => {
           font-weight: 500;
           font-size: 0.875rem;
           color: var(--text-main);
+        }
+
+        .profile-modal-content {
+          max-width: 420px;
+          padding: 0;
+          overflow: hidden;
+        }
+
+        .profile-details-body {
+          padding: 1.5rem;
+        }
+
+        .profile-hero {
+          display: flex;
+          align-items: center;
+          gap: 1.25rem;
+          margin-bottom: 2rem;
+          padding-bottom: 1.5rem;
+          border-bottom: 1px solid var(--border);
+        }
+
+        .avatar-large {
+          width: 64px;
+          height: 64px;
+          border-radius: 50%;
+          background: linear-gradient(135deg, var(--primary), #818cf8);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: white;
+          box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.2);
+        }
+
+        .hero-text h4 {
+          margin: 0 0 0.5rem 0;
+          font-size: 1.25rem;
+          color: var(--text-main);
+        }
+
+        .status-badge {
+          display: inline-flex;
+          align-items: center;
+          font-size: 0.75rem;
+          font-weight: 600;
+          color: #10b981;
+          background: rgba(16, 185, 129, 0.1);
+          padding: 0.25rem 0.75rem;
+          border-radius: 1rem;
+        }
+
+        .info-grid {
+          display: flex;
+          flex-direction: column;
+          gap: 1.25rem;
+          margin-bottom: 2rem;
+        }
+
+        .info-item {
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+          padding: 1rem;
+          background: var(--background);
+          border: 1px solid var(--border);
+          border-radius: var(--radius);
+          transition: border-color 0.2s;
+        }
+
+        .info-item:hover {
+          border-color: var(--primary);
+        }
+
+        .info-icon-wrapper {
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          background: var(--surface);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: var(--primary);
+          box-shadow: var(--shadow-sm);
+        }
+
+        .info-text label {
+          display: block;
+          font-size: 0.75rem;
+          color: var(--text-muted);
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+          margin-bottom: 0.25rem;
+        }
+
+        .info-text p {
+          margin: 0;
+          color: var(--text-main);
+          font-weight: 500;
+        }
+
+        .w-full {
+          width: 100%;
+          justify-content: center;
+        }
+
+        .modal-overlay {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100vw;
+          height: 100vh;
+          background-color: rgba(0, 0, 0, 0.4);
+          backdrop-filter: blur(8px);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          z-index: 1000;
+        }
+
+        .modal-content {
+          background-color: var(--surface);
+          border-radius: var(--radius);
+          width: 100%;
+          max-width: 500px;
+          box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        .modal-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 1.5rem;
+          border-bottom: 1px solid var(--border);
+        }
+
+        .modal-header h3 {
+          margin: 0;
+          font-size: 1.25rem;
+          color: var(--text-main);
+        }
+
+        .close-btn {
+          color: var(--text-muted);
+          transition: color 0.2s;
+        }
+
+        .close-btn:hover {
+          color: var(--danger);
         }
       `}</style>
         </header>

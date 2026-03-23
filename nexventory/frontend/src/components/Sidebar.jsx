@@ -4,12 +4,12 @@ import { LayoutDashboard, Package, ShoppingCart, Receipt, BarChart3, Settings, B
 
 const Sidebar = () => {
   const navItems = [
-    { path: '/', label: 'Dashboard', icon: LayoutDashboard },
-    { path: '/products', label: 'Products', icon: Package },
-    { path: '/orders', label: 'Orders', icon: ShoppingCart },
-    { path: '/billing', label: 'Billing', icon: Receipt },
-    { path: '/reports', label: 'Reports', icon: BarChart3 },
-    { path: '/settings', label: 'Settings', icon: Settings },
+    { path: '/app', label: 'Dashboard', icon: LayoutDashboard },
+    { path: '/app/products', label: 'Products', icon: Package },
+    { path: '/app/orders', label: 'Orders', icon: ShoppingCart },
+    { path: '/app/billing', label: 'Billing', icon: Receipt },
+    { path: '/app/reports', label: 'Reports', icon: BarChart3 },
+    { path: '/app/settings', label: 'Settings', icon: Settings },
   ];
 
   return (

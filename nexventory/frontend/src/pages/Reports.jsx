@@ -51,7 +51,7 @@ const Reports = () => {
                         </div>
                         <div>
                             <p className="report-label">Total Orders</p>
-                            <h3 className="report-value">{stats.totalOrders || 145}</h3>
+                            <h3 className="report-value">{stats.totalOrders ?? 0}</h3>
                             <p className="report-period">This Month</p>
                         </div>
                     </div>

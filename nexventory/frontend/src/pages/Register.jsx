@@ -6,6 +6,7 @@ import { Box, UserPlus } from 'lucide-react';
 const Register = () => {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
+    const [mobile, setMobile] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const { register } = useAuth();
@@ -25,9 +26,14 @@ const Register = () => {
             return;
         }
 
+        if (!/^\d{10}$/.test(mobile) || mobile === '0000000000') {
+            setError('Please enter exactly a 10-digit mobile number.');
+            return;
+        }
+
         try {
-            await register(name, email, password);
-            navigate('/');
+            await register(name, email, password, mobile);
+            navigate('/app');
         } catch (err) {
             setError(err.message);
         }
@@ -53,8 +59,15 @@ const Register = () => {
                         }} placeholder="John Doe" />
                     </div>
                     <div className="form-group">
-                        <label>Email Address</label>
+                        <label>Email Address *</label>
                         <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Enter your email" />
+                    </div>
+                    <div className="form-group">
+                        <label>Mobile Number *</label>
+                        <input type="text" required maxLength={10} value={mobile} onChange={(e) => {
+                            const val = e.target.value.replace(/\D/g, '').slice(0, 10);
+                            setMobile(val);
+                        }} placeholder="10-digit mobile" />
                     </div>
                     <div className="form-group">
                         <label>Password</label>

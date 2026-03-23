@@ -58,26 +58,38 @@ const Billing = () => {
         }
     };
 
-    const handleSubmit = () => {
+    const validateOrder = () => {
         if (!customer.name || !/^[A-Za-z\s]+$/.test(customer.name)) {
             alert('Please enter a valid customer name (letters and spaces only).');
-            return;
+            return false;
         }
 
         if (!customer.phone || !/^\d{10}$/.test(customer.phone) || customer.phone === '0000000000') {
             alert('Please enter a valid 10-digit mobile number (cannot be all zeros).');
-            return;
+            return false;
         }
 
         if (!customer.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(customer.email)) {
             alert('Please enter a valid email address.');
-            return;
+            return false;
         }
 
         if (items.some(i => !i.productId)) {
             alert('Please select products for all items in the invoice.');
-            return;
+            return false;
         }
+        
+        return true;
+    };
+
+    const handlePrint = () => {
+        if (validateOrder()) {
+            window.print();
+        }
+    };
+
+    const handleSubmit = () => {
+        if (!validateOrder()) return;
 
         const newOrder = {
             id: `ORD-${Date.now()}`,
@@ -230,16 +242,16 @@ const Billing = () => {
                         <span>{formatCurrency(grandTotal)}</span>
                     </div>
                     <div className="summary-row">
-                        <span>Tax (10%)</span>
-                        <span>{formatCurrency(grandTotal * 0.1)}</span>
+                        <span>Tax (18% GST)</span>
+                        <span>{formatCurrency(grandTotal * 0.18)}</span>
                     </div>
                     <div className="summary-total">
                         <span>Grand Total</span>
-                        <span>{formatCurrency(grandTotal * 1.1)}</span>
+                        <span>{formatCurrency(grandTotal * 1.18)}</span>
                     </div>
 
                     <div className="action-buttons-large">
-                        <button className="btn btn-outline" onClick={() => window.print()}>
+                        <button className="btn btn-outline" onClick={handlePrint}>
                             <Printer size={20} /> Print
                         </button>
                         <button className="btn btn-primary" onClick={handleSubmit}>
@@ -371,25 +383,18 @@ const Billing = () => {
             print-color-adjust: exact !important;
           }
 
-          /* Hide app UI */
-          .sidebar, .header, .btn, .icon-btn-danger, .text-muted, .items-header, .action-buttons-large, .print-hide {
+          /* Hide specific actions but keep UI visible */
+          .btn, .icon-btn-danger, .items-header, .action-buttons-large, .print-hide {
             display: none !important;
           }
           
-          /* Reset main content layout */
-          .main-content {
-            margin-left: 0 !important;
-            background: white !important;
-          }
-          
+          /* Keep main content aligned */
           .content-area {
-            padding: 0 !important;
             overflow: visible !important;
           }
           
           body {
-            background: white !important;
-            color: var(--text-main) !important;
+            color: var(--text-main);
           }
 
           /* Header styling */
