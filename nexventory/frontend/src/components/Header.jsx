@@ -10,7 +10,7 @@ const Header = ({ title }) => {
 
     const handleLogout = () => {
         logout();
-        window.location.href = '/login';
+        window.location.href = '/';
     };
 
     return (

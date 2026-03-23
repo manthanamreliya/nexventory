@@ -76,9 +76,6 @@ const Dashboard = () => {
                         <Package size={48} />
                     </div>
                     <h2>Welcome to Nexventory!</h2>
-                    <p className="text-muted">
-                        Your inventory is currently empty. Get started by adding your very first product to begin tracking sales, stock, and revenue automatically.
-                    </p>
                     <button className="btn btn-primary mt-4" onClick={() => window.location.href = '/app/products'}>
                         Get Started
                     </button>
